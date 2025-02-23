@@ -30,6 +30,3 @@ def predict(data: InputData):
     
     return {"prediction": prediccion.tolist()}
 
-# Ejecutar solo si se corre localmente
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
