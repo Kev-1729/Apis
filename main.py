@@ -2,6 +2,7 @@ import joblib
 import numpy as np
 from fastapi import FastAPI
 from pydantic import BaseModel
+import uvicorn
 
 # Cargar el modelo
 with open("modelo_svc.pkl", "rb") as f:
@@ -16,8 +17,8 @@ class InputData(BaseModel):
 
 @app.get("/")
 def saludo():
-    return {"mensaje": f"Modelo de Machine learning!",
-            "saludo": f"Que fue Harold"}
+    return {"mensaje": "Modelo de Machine Learning!",
+            "saludo": "Que fue Harold"}
 
 @app.post("/predict/")
 def predict(data: InputData):
@@ -29,3 +30,6 @@ def predict(data: InputData):
     
     return {"prediction": prediccion.tolist()}
 
+# Ejecutar solo si se corre localmente
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
