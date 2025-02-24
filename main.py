@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Cargar el modelo y el StandardScaler
@@ -19,6 +20,13 @@ columnas = ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyRate',
 
 # Inicializar FastAPI
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["employee-attrition.netlify.app"],  
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permitir todos los headers
+)
 
 # Definir la estructura de los datos de entrada
 class InputData(BaseModel):
