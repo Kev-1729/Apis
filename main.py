@@ -6,11 +6,9 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-# Cargar el modelo y el StandardScaler
 modelo = joblib.load("modelo_svc.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# Definir las columnas esperadas (ajústala según tu dataset)
 columnas = ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyRate',
             'YearsAtCompany', 'BusinessTravel_Travel_Frequently',
             'JobRole_Laboratory Technician', 'JobRole_Manager',
@@ -18,36 +16,31 @@ columnas = ['Age', 'DailyRate', 'DistanceFromHome', 'HourlyRate', 'MonthlyRate',
             'MaritalStatus_Single', 'OverTime_Yes', 'JobLevel_2', 'JobLevel_4',
             'StockOptionLevel_1']
 
-# Inicializar FastAPI
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["employee-attrition.netlify.app"],  
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todos los headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Definir la estructura de los datos de entrada
 class InputData(BaseModel):
     features: list
 
 @app.get("/")
 def saludo():
-    return {"mensaje": "API de Machine Learning en Render con preprocesamiento automático!"}
+    return {"mensaje": "API de Machine Learning en Render con preprocesamiento automático!",
+           "prueba": "'features': [42.0, 933, 19, 57, 20366.0, 2, true, false, false, false, false, false, true, false, false, false]"}
 
 @app.post("/predict/")
 def predict(data: InputData):
-    # Convertir los datos de entrada en un DataFrame con nombres de columnas
     X = pd.DataFrame([data.features], columns=columnas)
 
-    # Convertir booleanos a enteros (1 y 0)
     X = X.applymap(lambda x: int(x) if isinstance(x, bool) else x)
 
-    # Aplicar la transformación con el StandardScaler
     X_scaled = scaler.transform(X)
 
-    # Hacer la predicción con el modelo
     prediccion = modelo.predict(X_scaled)
 
     return {"prediction": prediccion.tolist()}
