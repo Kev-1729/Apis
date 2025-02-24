@@ -29,9 +29,26 @@ class InputData(BaseModel):
     features: list
 
 @app.get("/")
-def saludo():
-    return {"mensaje": "API de Machine Learning en Render con preprocesamiento automático!",
-           "prueba": "'features': [42.0, 933, 19, 57, 20366.0, 2, true, false, false, false, false, false, true, false, false, false]"}
+def home():
+    return {
+        "mensaje": "Bienvenido a la API de Machine Learning para predicción de deserción laboral.",
+        "descripcion": "Esta API usa un modelo de Machine Learning para hacer predicciones de renuncias basadas en características de empleados.",
+        "endpoints": {
+            "GET /": "Información sobre la API.",
+            "POST /predict/": "Enviar características para obtener una predicción.",
+        },
+        "ejemplo_prediccion": {
+            "url": "/predict/",
+            "metodo": "POST",
+            "cuerpo": {
+                "features": [42.0, 933, 19, 57, 20366.0, 2, True, False, False, False, False, False, True, False, False, False]
+            },
+            "respuesta_esperada": {
+                "prediction": [1] 
+            }
+        }
+    }
+
 
 @app.post("/predict/")
 def predict(data: InputData):
@@ -44,5 +61,3 @@ def predict(data: InputData):
     prediccion = modelo.predict(X_scaled)
 
     return {"prediction": prediccion.tolist()}
-
-
